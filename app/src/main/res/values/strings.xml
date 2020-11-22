@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Repentance and Holiness</string>
+    <string name="title_activity_index">index</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Update</string>
+    <string name="radio">JESUS IS LORD Radio</string>
+    <string name="callradio">Call the Radio</string>
+    <string name="contactmyalter">Find my alter</string>
+
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcomemsg">Prepare the way, The Messiah is coming</string>
+    <string name="abtapp1">-Locate Your Church and Access Contact Details.\n</string>
+    <string name="abtapp2">-Listen To JESUS IS LORD Radio.\n</string>
+    <string name="abtapp3">-Access Teachings By The Mightiest Prophets of the LORD.\n</string>
+    <string name="abtapp4">-Get Access To Healings, Visitations and Prophecies of the LORD.</string>
+    <string name="wintext">Search your church pastor or place</string>
+
+    <string name="permission_request">To complete the action, this permission is required; without it we are not able to perform the action; please allow the permission</string>
+    <string name="write_storage">Write Storage</string>
+
+    <string name="permission_requestone">To complete the action, this permission is required; without it we are not able to perform the action; please allow the permission</string>
+    <string name="recordone">Recording audio</string>
+
+    <string name="permission_requestwo">To complete the action, this permission is required; without it we are not able to perform the action; please allow the permission</string>
+    <string name="recordtwo">Calling permisions</string>
+</resources>
