@@ -40,7 +40,7 @@ import java.util.*
 
 class Radiostream : Fragment(R.layout.fragment_radiostream) {
     private var playbackStateListener: PlaybackStateListener? = null
-    private lateinit var exoPlayer: SimpleExoPlayer
+    private var exoPlayer: SimpleExoPlayer?=null
 
     private var handler: Handler? = null
     private var isPlaying = false
@@ -153,11 +153,11 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         adView!!.loadAd()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
-        exoPlayer.release()
-
+        exoPlayer?.release()
+        exoPlayer=null
     }
 
     private fun prepareExoPlayerFromURL(uri: Uri) {
@@ -174,8 +174,8 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
             null
         )
         playbackStateListener = PlaybackStateListener()
-        exoPlayer.addListener(playbackStateListener)
-        exoPlayer.prepare(mediaSource)
+        exoPlayer?.addListener(playbackStateListener)
+        exoPlayer?.prepare(mediaSource)
 
         initMediaControls()
 
@@ -198,7 +198,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
      */
     private fun setPlayPause(play: Boolean) {
         isPlaying = play
-        exoPlayer.playWhenReady = play
+        exoPlayer?.playWhenReady = play
         if (!isPlaying) {
             binding.btnPlay.setImageResource(android.R.drawable.ic_media_play)
         } else {
@@ -227,21 +227,23 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
 
     private fun setProgress() {
         binding.mediacontrollerProgress.progress = 0
-        binding.mediacontrollerProgress.max = exoPlayer.duration.toInt() / 1000
-        binding.timeCurrent.text = stringForTime(exoPlayer.currentPosition.toInt())
-        binding.playerEndTime.text = stringForTime(exoPlayer.duration.toInt())
+        binding.mediacontrollerProgress.max = exoPlayer?.duration!!.toInt() / 1000
+        binding.timeCurrent.text = stringForTime(exoPlayer?.currentPosition!!.toInt())
+        binding.playerEndTime.text = stringForTime(exoPlayer?.duration!!.toInt())
         if (handler == null) handler = Handler()
         //Make sure you update Seekbar on UI thread
         handler!!.post(object : Runnable {
             override fun run() {
-                if (exoPlayer != null && isPlaying) {
-                    binding.mediacontrollerProgress.max = exoPlayer.duration.toInt() / 1000
-                    val mCurrentPosition = exoPlayer.currentPosition.toInt() / 1000
-                    binding.mediacontrollerProgress.progress = mCurrentPosition
-                    binding.timeCurrent.text = stringForTime(exoPlayer.currentPosition.toInt())
-                    binding.playerEndTime.text = stringForTime(exoPlayer.duration.toInt())
-                    handler!!.postDelayed(this, 1000)
-                }
+                    if (exoPlayer != null && isPlaying) {
+                        binding.mediacontrollerProgress.max = exoPlayer?.duration!!.toInt() / 1000
+                        val mCurrentPosition = exoPlayer?.currentPosition!!.toInt() / 1000
+                        binding.mediacontrollerProgress.progress = mCurrentPosition
+                        binding.timeCurrent.text = stringForTime(exoPlayer?.currentPosition!!.toInt())
+                        binding.playerEndTime.text = stringForTime(exoPlayer?.duration!!.toInt())
+                        handler!!.postDelayed(this, 1000)
+                    }
+
+
             }
         })
     }
@@ -256,14 +258,14 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
                     // the progress bar's position.
                     return
                 }
-                exoPlayer.seekTo(progress * 1000.toLong())
+                exoPlayer?.seekTo(progress * 1000.toLong())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
         binding.mediacontrollerProgress.max = 0
-        binding.mediacontrollerProgress.max = exoPlayer.duration.toInt() / 1000
+        binding.mediacontrollerProgress.max = exoPlayer?.duration!!.toInt() / 1000
     }
 
     private inner class PlaybackStateListener : Player.EventListener {
@@ -288,8 +290,8 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
                     binding.rec.visibility = View.VISIBLE
                     binding.txtrecord.visibility = View.VISIBLE
                     Log.i(
-                        TAG, "ExoPlayer ready! pos: " + exoPlayer.currentPosition
-                                + " max: " + stringForTime(exoPlayer.duration.toInt())
+                        TAG, "ExoPlayer ready! pos: " + exoPlayer?.currentPosition
+                                + " max: " + stringForTime(exoPlayer?.duration!!.toInt())
                     )
                     setProgress()
                 }
@@ -297,7 +299,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
                     stateString = "ExoPlayer.STATE_ENDED     -"
                     //Stop playback and return to start position
                     setPlayPause(false)
-                    exoPlayer.seekTo(0)
+                    exoPlayer?.seekTo(0)
                 }
                 else -> stateString = "UNKNOWN_STATE             -"
             }
@@ -445,6 +447,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         playerNotificationManager.setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
         playerNotificationManager.setPlayer(exoPlayer)
     }
+
 
 
 
