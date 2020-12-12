@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.media.MediaRecorder
 import android.net.Uri
 import android.os.*
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.widget.SeekBar
@@ -17,8 +18,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import com.facebook.ads.AdSize
-import com.facebook.ads.AdView
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -26,10 +25,10 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import www.digitalexperts.church_tracker.Utils.createaudiofile
-import www.digitalexperts.church_tracker.Utils.getBitmapFromVectorDrawable
-import www.digitalexperts.church_tracker.Utils.permissionGranted
-import www.digitalexperts.church_tracker.Utils.showPermissionRequestExplanation
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import www.digitalexperts.church_tracker.Utils.*
 import www.digitalexperts.church_tracker.index
 import www.digitalexperts.church_traker.BuildConfig
 import www.digitalexperts.church_traker.R
@@ -62,7 +61,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
 
     /*0775967323*/
     private var filenamea: String? = null
-    private var adView: AdView? = null
+    private lateinit var adView: AdView
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -126,8 +125,9 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         binding.playnow.setOnClickListener { v ->
             val externalStorageDirectory= File(fileName)
             val folder = File(externalStorageDirectory.absolutePath)
-            val file = folder.listFiles()
+            val file = context?.readmyaudios()
             if (file!=null){
+                Log.d(TAG, "the file is "+file[0])
             if (file.size != 0) {
                 Navigation.findNavController(v).navigate(R.id.action_live_to_audiostuff)
             } else {
@@ -148,9 +148,16 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
             }
         }
 
-        adView = AdView(context, "376366029998847_376375873331196", AdSize.BANNER_HEIGHT_50)
+        adView = AdView(context)
         binding.bannerContainertwo.addView(adView)
-        adView!!.loadAd()
+        adView.adUnitId = "ca-app-pub-4814079884774543/6358507489"
+
+        adView.adSize = adSize
+        val adRequest = AdRequest
+            .Builder()
+            .build()
+        // Start loading the ad in the background.
+        adView.loadAd(adRequest)
     }
 
     override fun onDestroyView() {
@@ -159,7 +166,22 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         exoPlayer?.release()
         exoPlayer=null
     }
+    private val adSize: AdSize
+        get() {
+            val display =activity?.windowManager!!.defaultDisplay
+            val outMetrics = DisplayMetrics()
+            display.getMetrics(outMetrics)
 
+            val density = outMetrics.density
+
+            var adWidthPixels = binding.bannerContainertwo.width.toFloat()
+            if (adWidthPixels == 0f) {
+                adWidthPixels = outMetrics.widthPixels.toFloat()
+            }
+
+            val adWidth = (adWidthPixels / density).toInt()
+            return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
+        }
     private fun prepareExoPlayerFromURL(uri: Uri) {
         val trackSelector = DefaultTrackSelector()
         val loadControl: LoadControl = DefaultLoadControl()

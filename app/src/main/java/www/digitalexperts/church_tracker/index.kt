@@ -21,6 +21,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
 import com.facebook.ads.AudienceNetworkAds
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,6 +47,7 @@ class index : AppCompatActivity() {
         val binding= ActivityIndexBinding.inflate(layoutInflater)
         setContentView(binding.root)
         AudienceNetworkAds.initialize(this)
+        MobileAds.initialize(this) { }
 
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
         val toolbar: Toolbar = findViewById(R.id.toolbar)

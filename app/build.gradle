@@ -17,8 +17,8 @@ android {
                 applicationId "www.digitalexperts.church_traker"
                 minSdkVersion 19
                 targetSdkVersion 30
-                versionCode 32
-                versionName "1.5"
+                versionCode 33
+                versionName "1.6"
                 multiDexEnabled true
                 vectorDrawables.useSupportLibrary = true
                 testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -108,6 +108,10 @@ dependencies {
 
     //facebook ads
     implementation 'com.facebook.android:audience-network-sdk:5.11.0'
+    //Google ads
+    implementation 'com.google.android.gms:play-services-ads:19.6.0'
+    //native templates
+    implementation project(':nativetemplates')
 }
 kapt {
     correctErrorTypes true

@@ -1,5 +1,7 @@
 package www.digitalexperts.church_tracker.Adapters
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,11 @@ import android.widget.TextView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.facebook.ads.*
+import com.google.android.ads.nativetemplates.NativeTemplateStyle
+import com.google.android.ads.nativetemplates.TemplateView
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdLoader
+import com.google.android.gms.ads.AdRequest
 import www.digitalexperts.church_tracker.fragments.PdfsDirections
 import www.digitalexperts.church_tracker.models.FolderzItem
 import www.digitalexperts.church_traker.R
@@ -22,7 +29,7 @@ class Pdfadapter(val pdfz: ArrayList<FolderzItem>) : RecyclerView.Adapter<Recycl
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == AD_TYPE) {
             val view = LayoutInflater.from(parent.context).inflate(
-                R.layout.templatefile,
+                R.layout.templatefile2,
                 parent,
                 false
             )
@@ -75,82 +82,38 @@ class Pdfadapter(val pdfz: ArrayList<FolderzItem>) : RecyclerView.Adapter<Recycl
     }
 
     inner class adholderc(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private var nativeAdLayout: NativeAdLayout? = null
-        private var adView: LinearLayout? = null
-        private val nativeBannerAd: NativeBannerAd?
-        private fun inflateAd(nativeBannerAd: NativeBannerAd) {
-            // Unregister last ad
-            nativeBannerAd.unregisterView()
-
-            // Add the Ad view into the ad container.
-            nativeAdLayout = itemView.findViewById(R.id.native_banner_ad_container)
-            val inflater = LayoutInflater.from(itemView.context)
-            // Inflate the Ad view.  The layout referenced is the one you created in the last step.
-            adView = inflater.inflate(
-                R.layout.native_banner_ad_container,
-                nativeAdLayout,
-                false
-            ) as LinearLayout
-            nativeAdLayout?.addView(adView)
-
-            // Add the AdChoices icon
-            val adChoicesContainer =
-                adView!!.findViewById<RelativeLayout>(R.id.ad_choices_container)
-            val adOptionsView = AdOptionsView(itemView.context, nativeBannerAd, nativeAdLayout)
-            adChoicesContainer.removeAllViews()
-            adChoicesContainer.addView(adOptionsView, 0)
-
-            // Create native UI using the ad metadata.
-            val nativeAdTitle = adView!!.findViewById<TextView>(R.id.native_ad_title)
-            val nativeAdSocialContext =
-                adView!!.findViewById<TextView>(R.id.native_ad_social_context)
-            val sponsoredLabel = adView!!.findViewById<TextView>(R.id.native_ad_sponsored_label)
-            val nativeAdIconView: AdIconView = adView!!.findViewById(R.id.native_icon_view)
-            val nativeAdCallToAction = adView!!.findViewById<Button>(R.id.native_ad_call_to_action)
-
-            // Set the Text.
-            nativeAdCallToAction.text = nativeBannerAd.adCallToAction
-            nativeAdCallToAction.visibility =
-                if (nativeBannerAd.hasCallToAction()) View.VISIBLE else View.INVISIBLE
-            nativeAdTitle.text = nativeBannerAd.advertiserName
-            nativeAdSocialContext.text = nativeBannerAd.adSocialContext
-            sponsoredLabel.text = nativeBannerAd.sponsoredTranslation
-
-            // Register the Title and CTA button to listen for clicks.
-            val clickableViews: MutableList<View> = java.util.ArrayList()
-            clickableViews.add(nativeAdTitle)
-            clickableViews.add(nativeAdCallToAction)
-            nativeBannerAd.registerViewForInteraction(adView, nativeAdIconView, clickableViews)
-        }
+        private val template: TemplateView?
 
         init {
-            AudienceNetworkAds.initialize(itemView.context)
-            nativeBannerAd = NativeBannerAd(
-                itemView.context,
-                "376366029998847_376367446665372"
-            )
-            nativeBannerAd.setAdListener(object : NativeAdListener {
-                override fun onMediaDownloaded(ad: Ad) {}
-                override fun onError(ad: Ad, adError: AdError) {
-                    // Toast.makeText(itemView.getContext(), adError.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-                override fun onAdLoaded(ad: Ad) {
-                    // Race condition, load() called again before last ad was displayed
-                    if (nativeBannerAd == null || nativeBannerAd !== ad) {
-                        return
+            template = itemView.findViewById(R.id.my_templatebc)
+            val adRequest = AdRequest.Builder().build()
+            val adLoader =
+                AdLoader.Builder(itemView.context, "ca-app-pub-4814079884774543/2277771600")
+                    .forUnifiedNativeAd { unifiedNativeAd ->
+                        val styles: NativeTemplateStyle =
+                            NativeTemplateStyle.Builder().withMainBackgroundColor(
+                                ColorDrawable(
+                                    Color.WHITE)
+                            )
+                                .build()
+                        template.setStyles(styles)
+                        template.setNativeAd(unifiedNativeAd)
                     }
-                    // Inflate Native Banner Ad into Container
-                    inflateAd(nativeBannerAd)
-                }
+                    .withAdListener(object : AdListener() {
+                        override fun onAdFailedToLoad(errorCode: Int) {
+                            // Handle the failure by logging, altering the UI, and so on.
+                        }
 
-                override fun onAdClicked(ad: Ad) {}
-                override fun onLoggingImpression(ad: Ad) {}
-            })
-            // load the ad
-            nativeBannerAd.loadAd()
+                        override fun onAdLoaded() {
+                            super.onAdLoaded()
+                            template.setVisibility(View.VISIBLE)
+                        }
+                    })
+                    .build()
+            if (adRequest != null && template != null) {
+                adLoader.loadAd(adRequest)
+            }
         }
-
     }
 
 }

@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -13,8 +14,9 @@ import android.webkit.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
-import com.facebook.ads.AdSize
-import com.facebook.ads.AdView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import www.digitalexperts.church_tracker.Utils.visible
 import www.digitalexperts.church_traker.R
 import www.digitalexperts.church_traker.databinding.FragmentWvinfoBinding
@@ -24,7 +26,7 @@ class wvinfo : Fragment(R.layout.fragment_wvinfo) {
     private  var _binding : FragmentWvinfoBinding?=null
     private val binding get() = _binding!!
     private val args:wvinfoArgs by navArgs()
-    private var adView: AdView? = null
+    private lateinit var adView: AdView
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -122,10 +124,38 @@ class wvinfo : Fragment(R.layout.fragment_wvinfo) {
                 false
             })
         }
-        adView = AdView(context, "376366029998847_376375873331196", AdSize.BANNER_HEIGHT_50)
+        adView = AdView(context)
         binding.bannerContainertwo.addView(adView)
-        adView!!.loadAd()
+        adView.adUnitId = "ca-app-pub-4814079884774543/6358507489"
+
+        adView.adSize = adSize
+        val adRequest = AdRequest
+            .Builder()
+            .build()
+        // Start loading the ad in the background.
+        adView.loadAd(adRequest)
+
+       /* adView = AdView(context, "376366029998847_376375873331196", AdSize.BANNER_HEIGHT_50)
+        binding.bannerContainertwo.addView(adView)
+        adView!!.loadAd()*/
     }
+
+    private val adSize: AdSize
+        get() {
+            val display =activity?.windowManager!!.defaultDisplay
+            val outMetrics = DisplayMetrics()
+            display.getMetrics(outMetrics)
+
+            val density = outMetrics.density
+
+            var adWidthPixels = binding.bannerContainertwo.width.toFloat()
+            if (adWidthPixels == 0f) {
+                adWidthPixels = outMetrics.widthPixels.toFloat()
+            }
+
+            val adWidth = (adWidthPixels / density).toInt()
+            return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
+        }
 
     override fun onDestroy() {
         super.onDestroy()

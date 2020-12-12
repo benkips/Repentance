@@ -1,11 +1,13 @@
 package www.digitalexperts.church_tracker.models
 
+import android.net.Uri
 import androidx.recyclerview.widget.DiffUtil
 
 data class Myaudioitems (
-    val modified:Long,
-    val name:String,
-    val path:String
+    val uri: Uri,
+    val name: String,
+    val duration: Int,
+    val size: Int
 )
 
 class DiffUtilRepositoriesModelItem: DiffUtil.ItemCallback<Myaudioitems>() {
@@ -13,7 +15,7 @@ class DiffUtilRepositoriesModelItem: DiffUtil.ItemCallback<Myaudioitems>() {
         oldItem: Myaudioitems,
         newItem: Myaudioitems
     ): Boolean {
-        return newItem.modified == oldItem.modified
+        return newItem.size == oldItem.size
     }
 
     override fun areContentsTheSame(
