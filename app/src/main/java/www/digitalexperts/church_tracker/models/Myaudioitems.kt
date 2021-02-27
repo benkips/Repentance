@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil
 data class Myaudioitems (
     val uri: Uri,
     val name: String,
-    val duration: Int,
     val size: Int
 )
 

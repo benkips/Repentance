@@ -1,5 +1,6 @@
 package www.digitalexperts.church_tracker.Utils
 
+import android.app.PendingIntent
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.ContentValues.TAG
@@ -7,9 +8,12 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
+import android.os.Environment.getExternalStoragePublicDirectory
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -19,12 +23,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.NavDeepLinkBuilder
 import com.google.android.material.snackbar.Snackbar
 import www.digitalexperts.church_tracker.Network.Resource
 import www.digitalexperts.church_tracker.fragments.Radiostream
+import www.digitalexperts.church_tracker.index
 import www.digitalexperts.church_tracker.models.Audioss
 import www.digitalexperts.church_tracker.models.Myaudioitems
+import www.digitalexperts.church_traker.R
+import java.io.File
 import java.io.IOException
+import java.net.URL
 
 
 fun View.snackbar(message: String, action: (() -> Unit)? = null) {
@@ -62,6 +72,7 @@ fun Context.showPermissionRequestExplanation(
     retry: (() -> Unit)? = null
 ) {
     AlertDialog.Builder(this).apply {
+
         setTitle("$permission Required")
         setMessage(message)
         setPositiveButton("Ok") { _, _ -> retry?.invoke() }
@@ -126,13 +137,17 @@ fun Context.readmyaudios():List<Audioss>{
     val projection = arrayOf(
         MediaStore.Audio.Media._ID,
         MediaStore.Audio.Media.DISPLAY_NAME,
-        MediaStore.Audio.Media.DURATION,
         MediaStore.Audio.Media.SIZE
     )
     val  directory = "Recordings"
     val audiodir = "%" + directory + "%";
 
-    val selection = "${MediaStore.Audio.Media.RELATIVE_PATH}   like ?"
+    val selection =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            "${MediaStore.Audio.Media.RELATIVE_PATH}   like ?"
+        }else{
+        "${MediaStore.Audio.Media.DATA}   like ?"
+        }
     val selectionArgs = arrayOf(
         audiodir
     )
@@ -150,15 +165,12 @@ fun Context.readmyaudios():List<Audioss>{
         val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
         val nameColumn =
             cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
-        val durationColumn =
-            cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
         val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)
 
         while (cursor.moveToNext()) {
             // Get values of columns for a given video.
             val id = cursor.getLong(idColumn)
             val name = cursor.getString(nameColumn)
-            val duration = cursor.getInt(durationColumn)
             val size = cursor.getInt(sizeColumn)
 
             val contentUri: Uri = ContentUris.withAppendedId(
@@ -168,7 +180,7 @@ fun Context.readmyaudios():List<Audioss>{
 
             // Stores column values and the contentUri in a local object
             // that represents the media file.
-            audioList += Audioss(contentUri, name, duration, size)
+            audioList += Audioss(contentUri, name, size)
         }
     }
     return  audioList
@@ -189,13 +201,17 @@ fun Context.readaudios():List<Myaudioitems>{
     val projection = arrayOf(
         MediaStore.Audio.Media._ID,
         MediaStore.Audio.Media.DISPLAY_NAME,
-        MediaStore.Audio.Media.DURATION,
         MediaStore.Audio.Media.SIZE
     )
     val  directory = "Recordings"
     val audiodir = "%" + directory + "%";
 
-    val selection = "${MediaStore.Audio.Media.RELATIVE_PATH}   like ?"
+    val selection =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            "${MediaStore.Audio.Media.RELATIVE_PATH}   like ?"
+        }else{
+            "${MediaStore.Audio.Media.DATA}   like ?"
+        }
     val selectionArgs = arrayOf(
         audiodir
     )
@@ -213,15 +229,12 @@ fun Context.readaudios():List<Myaudioitems>{
         val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
         val nameColumn =
             cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
-        val durationColumn =
-            cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
         val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)
 
         while (cursor.moveToNext()) {
             // Get values of columns for a given video.
             val id = cursor.getLong(idColumn)
             val name = cursor.getString(nameColumn)
-            val duration = cursor.getInt(durationColumn)
             val size = cursor.getInt(sizeColumn)
 
             val contentUri: Uri = ContentUris.withAppendedId(
@@ -231,7 +244,7 @@ fun Context.readaudios():List<Myaudioitems>{
 
             // Stores column values and the contentUri in a local object
             // that represents the media file.
-            audioList += Myaudioitems(contentUri, name, duration, size)
+            audioList += Myaudioitems(contentUri, name,size)
         }
     }
     return  audioList
@@ -270,4 +283,34 @@ fun Context.deleteaudio(uri:Uri){
    }
 }
 
+fun getBitmapfromUrl(imageUrl: String?): Bitmap? {
+    return try {
+        val url = URL(imageUrl)
+        BitmapFactory.decodeStream(url.openConnection().getInputStream())
+    } catch (e: IOException) {
+        System.out.println(e)
+        null
+    }
+}
 
+fun Context.gotomy(x:Int): PendingIntent {
+//        navController.navigate(R.id.live)
+    val pendingintent= NavDeepLinkBuilder(this.applicationContext)
+        .setComponentName(index::class.java)
+        .setGraph(R.navigation.mobile_navigation)
+        .setDestination(x)
+        .createPendingIntent()
+    return pendingintent
+}
+
+fun Context.myalert(
+    permission: String,
+    message: String,
+    retry: (() -> Unit)? = null
+) {
+    AlertDialog.Builder(this).apply {
+        setTitle("$permission Required")
+        setMessage(message)
+        setPositiveButton("Ok") { _, _ -> retry?.invoke() }
+    }.show()
+}

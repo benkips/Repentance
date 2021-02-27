@@ -52,7 +52,6 @@ class Audiostuff : Fragment(R.layout.fragment_audiostuff),Recordingsadapter.Onit
                         Myaudioitems(
                             file[i].uri,
                             file[i].name,
-                            file[i].duration,
                             file[i].size
                         )
                     )

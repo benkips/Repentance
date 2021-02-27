@@ -4,10 +4,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
-import www.digitalexperts.church_tracker.models.Churches
-import www.digitalexperts.church_tracker.models.Folderz
-import www.digitalexperts.church_tracker.models.Pastors
-import www.digitalexperts.church_tracker.models.Pdfdata
+import www.digitalexperts.church_tracker.models.*
 
 interface ApiInterface {
     companion object{
@@ -32,5 +29,10 @@ interface ApiInterface {
     @POST("events.php")
     @FormUrlEncoded
     suspend fun  getingpastors(@Field("cid") x:String?):Pastors
+
+    //getting healings
+    @POST("mobiadmin/fullhealings")
+    @FormUrlEncoded
+    suspend fun  gethealings(@Field("pg") x: Int?,@Field("count")q: Int?):Heal
 
 }

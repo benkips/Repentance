@@ -39,7 +39,7 @@ import java.util.*
 
 class Radiostream : Fragment(R.layout.fragment_radiostream) {
     private var playbackStateListener: PlaybackStateListener? = null
-    private var exoPlayer: SimpleExoPlayer?=null
+    private var exoPlayer: SimpleExoPlayer? = null
 
     private var handler: Handler? = null
     private var isPlaying = false
@@ -52,7 +52,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
     private var fileName: String? = null
     private var recorder: MediaRecorder? = null
 
-    private var datez:String?=null
+    private var datez: String? = null
     val BITS_PER_SAMPLE = 16 // 16-bit data
 
     val NUMBER_CHANNELS = 1 // Mono
@@ -77,7 +77,8 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
 
         /*Environment.getExternalStorageDirectory().toString() + File.separator + "recordings/"*/
         fileName =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).toString() + File.separator + "Recordings/"
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
+                .toString() + File.separator + "Recordings/"
 
 
         //Create  folder if it does not exist
@@ -94,9 +95,9 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
             val m = c[Calendar.MONTH]
             val y = c[Calendar.YEAR]
             val dates = date.toString() + "_" + (m + 1) + "_" + y + "_" + sec
-            datez="JESUS_is_lORD_radio_$dates"
+            datez = "JESUS_is_lORD_radio_$dates"
 
-            val file= File(fileName, "JESUS_is_lORD_radio_$dates.m4a")
+            val file = File(fileName, "JESUS_is_lORD_radio_$dates.m4a")
             filenamea = file.absolutePath
             binding.txtrecord.text = "recording..."
             startRecording()
@@ -123,22 +124,21 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
             Navigation.findNavController(view).navigate(R.id.wvinfo, bundleOf("web" to c))
         }
         binding.playnow.setOnClickListener { v ->
-            val externalStorageDirectory= File(fileName)
+            val externalStorageDirectory = File(fileName)
             val folder = File(externalStorageDirectory.absolutePath)
             val file = context?.readmyaudios()
-            if (file!=null){
-                Log.d(TAG, "the file is "+file[0])
-            if (file.size != 0) {
-                Navigation.findNavController(v).navigate(R.id.action_live_to_audiostuff)
+            if (file != null) {
+                if (file.size != 0) {
+                    Navigation.findNavController(v).navigate(R.id.action_live_to_audiostuff)
+                } else {
+                    //no file available
+                    Toast.makeText(
+                        context,
+                        "You have no recordings currently",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             } else {
-                //no file available
-                Toast.makeText(
-                    context,
-                    "You have no recordings currently",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            }else{
                 //no file available
                 Toast.makeText(
                     context,
@@ -164,11 +164,12 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         super.onDestroyView()
         _binding = null
         exoPlayer?.release()
-        exoPlayer=null
+        exoPlayer = null
     }
+
     private val adSize: AdSize
         get() {
-            val display =activity?.windowManager!!.defaultDisplay
+            val display = activity?.windowManager!!.defaultDisplay
             val outMetrics = DisplayMetrics()
             display.getMetrics(outMetrics)
 
@@ -182,12 +183,13 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
             val adWidth = (adWidthPixels / density).toInt()
             return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
         }
+
     private fun prepareExoPlayerFromURL(uri: Uri) {
         val trackSelector = DefaultTrackSelector()
         val loadControl: LoadControl = DefaultLoadControl()
 
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl)
-        val userAgent = Util.getUserAgent(context, BuildConfig.APPLICATION_ID)
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(requireContext(), trackSelector, loadControl)
+        val userAgent = Util.getUserAgent(requireContext(), BuildConfig.APPLICATION_ID)
         val mediaSource = ExtractorMediaSource(
             uri,
             DefaultDataSourceFactory(context, userAgent),
@@ -196,7 +198,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
             null
         )
         playbackStateListener = PlaybackStateListener()
-        exoPlayer?.addListener(playbackStateListener)
+        exoPlayer?.addListener(playbackStateListener!!)
         exoPlayer?.prepare(mediaSource)
 
         initMediaControls()
@@ -256,14 +258,14 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         //Make sure you update Seekbar on UI thread
         handler!!.post(object : Runnable {
             override fun run() {
-                    if (exoPlayer != null && isPlaying) {
-                        binding.mediacontrollerProgress.max = exoPlayer?.duration!!.toInt() / 1000
-                        val mCurrentPosition = exoPlayer?.currentPosition!!.toInt() / 1000
-                        binding.mediacontrollerProgress.progress = mCurrentPosition
-                        binding.timeCurrent.text = stringForTime(exoPlayer?.currentPosition!!.toInt())
-                        binding.playerEndTime.text = stringForTime(exoPlayer?.duration!!.toInt())
-                        handler!!.postDelayed(this, 1000)
-                    }
+                if (exoPlayer != null && isPlaying) {
+                    binding.mediacontrollerProgress.max = exoPlayer?.duration!!.toInt() / 1000
+                    val mCurrentPosition = exoPlayer?.currentPosition!!.toInt() / 1000
+                    binding.mediacontrollerProgress.progress = mCurrentPosition
+                    binding.timeCurrent.text = stringForTime(exoPlayer?.currentPosition!!.toInt())
+                    binding.playerEndTime.text = stringForTime(exoPlayer?.duration!!.toInt())
+                    handler!!.postDelayed(this, 1000)
+                }
 
 
             }
@@ -379,9 +381,9 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         recorder?.setAudioEncodingBitRate(encodedBitRate)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val desc:ParcelFileDescriptor=requireContext().createaudiofile("$datez.m4a")
+            val desc: ParcelFileDescriptor = requireContext().createaudiofile("$datez.m4a")
             recorder?.setOutputFile(desc.fileDescriptor)
-        }else{
+        } else {
             recorder?.setOutputFile(filenamea)
         }
 
@@ -414,7 +416,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         val playerNotificationManager: PlayerNotificationManager
         val notificationId = 1234
         val mediaDescriptionAdapter = object : PlayerNotificationManager.MediaDescriptionAdapter {
-            override fun getCurrentSubText(player: Player?): String {
+            override fun getCurrentSubText(player: Player): CharSequence? {
                 return "Live"
             }
 
@@ -434,13 +436,13 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
                 player: Player,
                 callback: PlayerNotificationManager.BitmapCallback
             ): Bitmap? {
-               /*return AppCompatResources.getDrawable(context!!, R.drawable.jslord)?.toBitmap()*/
+                /*return AppCompatResources.getDrawable(context!!, R.drawable.jslord)?.toBitmap()*/
                 return requireContext().getBitmapFromVectorDrawable(R.drawable.jslord)
             }
         }
 
         playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
-            context,
+            requireContext(),
             "My_channel_id",
             R.string.app_name,
             notificationId,
@@ -469,8 +471,6 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         playerNotificationManager.setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
         playerNotificationManager.setPlayer(exoPlayer)
     }
-
-
 
 
 }

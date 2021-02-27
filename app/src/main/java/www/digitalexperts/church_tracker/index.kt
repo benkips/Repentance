@@ -1,5 +1,6 @@
 package www.digitalexperts.church_tracker
 
+import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -37,7 +38,7 @@ class index : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private  lateinit var navController: NavController
-     val TOPIC="Alerts"
+     val TOPIC="Alertstwo"
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
@@ -77,6 +78,7 @@ class index : AppCompatActivity() {
 
 
 
+
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.visitationa -> {
@@ -104,6 +106,9 @@ class index : AppCompatActivity() {
                 R.id.nav_insta -> {
                     val c = "https://www.instagram.com/jesusiscoming_2/"
                     navController.navigate(R.id.wvinfo, bundleOf("web" to c))
+                }
+                R.id.healings -> {
+                    navController.navigate(R.id.healingsfrag)
                 }
                 R.id.nav_share -> {
                     val sendIntent = Intent()
@@ -185,4 +190,6 @@ class index : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+
 }

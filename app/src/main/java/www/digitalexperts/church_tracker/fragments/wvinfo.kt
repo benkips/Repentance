@@ -48,7 +48,12 @@ class wvinfo : Fragment(R.layout.fragment_wvinfo) {
 
             binding.wvvs.webViewClient = object : WebViewClient() {
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                    binding.pgbar.visible(true)
+                    try {
+                        binding.pgbar.visible(true)
+                    } catch (exception: Exception) {
+                        exception.printStackTrace()
+                    }
+
                     super.onPageStarted(view, url, favicon)
 
                 }
