@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
     <application
@@ -59,6 +61,15 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <receiver
+            android:name="www.digitalexperts.church_tracker.LaunchPlayerBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.beraldo.playerlib.LAUNCH_PLAYER_ACTIVITY" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

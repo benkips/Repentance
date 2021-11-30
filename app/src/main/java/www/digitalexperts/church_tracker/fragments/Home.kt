@@ -2,6 +2,7 @@ package www.digitalexperts.church_tracker.fragments
 
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -61,6 +62,15 @@ class Home : Fragment(R.layout.fragment_home) {
             if(!qry.isEmpty()) {
                 srchnow(qry)
             }
+        }
+        binding.srchquery.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                val qry:String=binding.srchquery.text.toString().trim()
+                if(!qry.isEmpty()) {
+                    srchnow(qry)
+                }
+            }
+            true
         }
 
 

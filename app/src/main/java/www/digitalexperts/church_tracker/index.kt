@@ -186,6 +186,10 @@ class index : AppCompatActivity() {
 
         return super.onOptionsItemSelected(item)
     }
+/*override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    val navController = findNavController(R.id.nav_host_fragment)
+    return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+}*/
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()

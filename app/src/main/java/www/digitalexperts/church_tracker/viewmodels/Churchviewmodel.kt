@@ -2,12 +2,15 @@ package www.digitalexperts.church_tracker.viewmodels
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import www.digitalexperts.church_tracker.Network.Resource
 import www.digitalexperts.church_tracker.Repo.Repostuff
 import www.digitalexperts.church_tracker.models.Churches
+import javax.inject.Inject
 
-class Churchviewmodel @ViewModelInject constructor(private  val repostuff: Repostuff) :ViewModel(){
+@HiltViewModel
+class Churchviewmodel @Inject constructor(private  val repostuff: Repostuff) :ViewModel(){
 
     private val searchstring = MutableLiveData<String>()
     val result = searchstring.switchMap {

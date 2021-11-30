@@ -31,8 +31,8 @@ interface ApiInterface {
     suspend fun  getingpastors(@Field("cid") x:String?):Pastors
 
     //getting healings
-    @POST("mobiadmin/fullhealings")
+    @POST()
     @FormUrlEncoded
-    suspend fun  gethealings(@Field("pg") x: Int?,@Field("count")q: Int?):Heal
+    suspend fun  gethealings(@Url url : String,@Field("pg") x: Int?,@Field("count")q: Int?):Heal
 
 }

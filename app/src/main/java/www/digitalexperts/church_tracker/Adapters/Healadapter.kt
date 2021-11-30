@@ -54,7 +54,7 @@ class Healadapter (private val listener: OnItemClickListner) :
             binding.tme.text=sdf.format(date)
 
 
-            val  path ="http://repentanceandholinessinfo.com/static/uploads/"+heals.video
+            val  path ="http://mobile.repentanceandholinessinfo.com/static/uploads/"+heals.video
             //Set the current player core to ExoPlayer core
             binding.fiveVideoView.setMediaKernelClass ( ExoPlayerKernel::class.java)
             binding.fiveVideoView.setDataSource(path)

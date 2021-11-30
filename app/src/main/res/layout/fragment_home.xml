@@ -81,6 +81,9 @@
                             android:layout_marginEnd="@dimen/_8sdp"
                             android:layout_weight="5"
                             android:background="@null"
+                            android:imeOptions="actionGo"
+                            android:inputType="text"
+                            android:maxLines="1"
                             android:hint="Search here" />
 
                         <ImageButton

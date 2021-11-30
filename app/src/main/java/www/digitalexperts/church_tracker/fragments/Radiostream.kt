@@ -3,6 +3,10 @@ package www.digitalexperts.church_tracker.fragments
 import android.Manifest
 import android.app.Notification
 import android.app.PendingIntent
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.media.MediaRecorder
 import android.net.Uri
@@ -14,10 +18,12 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.beraldo.playerlib.PlayerService
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -28,6 +34,7 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import org.jetbrains.anko.AnkoLogger
 import www.digitalexperts.church_tracker.Utils.*
 import www.digitalexperts.church_tracker.index
 import www.digitalexperts.church_traker.BuildConfig
@@ -36,12 +43,9 @@ import www.digitalexperts.church_traker.databinding.FragmentRadiostreamBinding
 import java.io.File
 import java.io.IOException
 import java.util.*
+@RequiresApi(Build.VERSION_CODES.FROYO)
+class Radiostream : Fragment(R.layout.fragment_radiostream)  , AnkoLogger {
 
-class Radiostream : Fragment(R.layout.fragment_radiostream) {
-    private var playbackStateListener: PlaybackStateListener? = null
-    private var exoPlayer: SimpleExoPlayer? = null
-
-    private var handler: Handler? = null
     private var isPlaying = false
 
     private var _binding: FragmentRadiostreamBinding? = null
@@ -73,7 +77,13 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         requestrecodingPermission()
 
         val url = "https://s3.radio.co/s97f38db97/listen"
-        prepareExoPlayerFromURL(Uri.parse(url))
+        //Toast.makeText(context, urls, Toast.LENGTH_SHORT).show()
+        initMediaControls()
+        //Start the service
+        val intent = Intent(context, PlayerService::class.java).apply {
+            putExtra(PlayerService.STREAM_URL, url)
+        }
+        activity?.applicationContext!!.bindService(intent, connection, Context.BIND_AUTO_CREATE)
 
         /*Environment.getExternalStorageDirectory().toString() + File.separator + "recordings/"*/
         fileName =
@@ -83,6 +93,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
 
         //Create  folder if it does not exist
         val exportDir = File(fileName)
+        //val exportDir = File(context?.getExternalFilesDir( Environment.DIRECTORY_MUSIC).toString())
 
         if (!exportDir.exists()) {
             exportDir.mkdirs()
@@ -163,8 +174,6 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        exoPlayer?.release()
-        exoPlayer = null
     }
 
     private val adSize: AdSize
@@ -184,52 +193,10 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
             return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
         }
 
-    private fun prepareExoPlayerFromURL(uri: Uri) {
-        val trackSelector = DefaultTrackSelector()
-        val loadControl: LoadControl = DefaultLoadControl()
 
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(requireContext(), trackSelector, loadControl)
-        val userAgent = Util.getUserAgent(requireContext(), BuildConfig.APPLICATION_ID)
-        val mediaSource = ExtractorMediaSource(
-            uri,
-            DefaultDataSourceFactory(context, userAgent),
-            DefaultExtractorsFactory(),
-            null,
-            null
-        )
-        playbackStateListener = PlaybackStateListener()
-        exoPlayer?.addListener(playbackStateListener!!)
-        exoPlayer?.prepare(mediaSource)
 
-        initMediaControls()
 
-    }
 
-    private fun initMediaControls() {
-        initPlayButton()
-        initSeekBar()
-    }
-
-    private fun initPlayButton() {
-        binding.btnPlay.requestFocus()
-        binding.btnPlay.setOnClickListener { setPlayPause(!isPlaying) }
-    }
-
-    /**
-     * Starts or stops playback. Also takes care of the Play/Pause button toggling
-     *
-     * @param play True if playback should be started
-     */
-    private fun setPlayPause(play: Boolean) {
-        isPlaying = play
-        exoPlayer?.playWhenReady = play
-        if (!isPlaying) {
-            binding.btnPlay.setImageResource(android.R.drawable.ic_media_play)
-        } else {
-            setProgress()
-            binding.btnPlay.setImageResource(android.R.drawable.ic_media_pause)
-        }
-    }
 
 
     private fun stringForTime(timeMs: Int): String? {
@@ -249,90 +216,8 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         }
     }
 
-    private fun setProgress() {
-        binding.mediacontrollerProgress.progress = 0
-        binding.mediacontrollerProgress.max = exoPlayer?.duration!!.toInt() / 1000
-        binding.timeCurrent.text = stringForTime(exoPlayer?.currentPosition!!.toInt())
-        binding.playerEndTime.text = stringForTime(exoPlayer?.duration!!.toInt())
-        if (handler == null) handler = Handler()
-        //Make sure you update Seekbar on UI thread
-        handler!!.post(object : Runnable {
-            override fun run() {
-                if (exoPlayer != null && isPlaying) {
-                    binding.mediacontrollerProgress.max = exoPlayer?.duration!!.toInt() / 1000
-                    val mCurrentPosition = exoPlayer?.currentPosition!!.toInt() / 1000
-                    binding.mediacontrollerProgress.progress = mCurrentPosition
-                    binding.timeCurrent.text = stringForTime(exoPlayer?.currentPosition!!.toInt())
-                    binding.playerEndTime.text = stringForTime(exoPlayer?.duration!!.toInt())
-                    handler!!.postDelayed(this, 1000)
-                }
 
 
-            }
-        })
-    }
-
-    private fun initSeekBar() {
-        binding.mediacontrollerProgress.requestFocus()
-        binding.mediacontrollerProgress.setOnSeekBarChangeListener(object :
-            SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                if (!fromUser) {
-                    // We're not interested in programmatically generated changes to
-                    // the progress bar's position.
-                    return
-                }
-                exoPlayer?.seekTo(progress * 1000.toLong())
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar) {}
-        })
-        binding.mediacontrollerProgress.max = 0
-        binding.mediacontrollerProgress.max = exoPlayer?.duration!!.toInt() / 1000
-    }
-
-    private inner class PlaybackStateListener : Player.EventListener {
-
-        override fun onPlayerStateChanged(
-            playWhenReady: Boolean,
-            playbackState: Int
-        ) {
-            val stateString: String
-            when (playbackState) {
-                ExoPlayer.STATE_IDLE -> {
-                    stateString = "ExoPlayer.STATE_IDLE      -"
-                }
-                ExoPlayer.STATE_BUFFERING -> {
-                    stateString = "ExoPlayer.STATE_BUFFERING -"
-                    binding.pgbar.visibility = View.VISIBLE
-                }
-                ExoPlayer.STATE_READY -> {
-                    initListener()
-                    stateString = "ExoPlayer.STATE_READY     -"
-                    binding.pgbar.visibility = View.GONE
-                    binding.rec.visibility = View.VISIBLE
-                    binding.txtrecord.visibility = View.VISIBLE
-                    Log.i(
-                        TAG, "ExoPlayer ready! pos: " + exoPlayer?.currentPosition
-                                + " max: " + stringForTime(exoPlayer?.duration!!.toInt())
-                    )
-                    setProgress()
-                }
-                ExoPlayer.STATE_ENDED -> {
-                    stateString = "ExoPlayer.STATE_ENDED     -"
-                    //Stop playback and return to start position
-                    setPlayPause(false)
-                    exoPlayer?.seekTo(0)
-                }
-                else -> stateString = "UNKNOWN_STATE             -"
-            }
-            Log.d(
-                TAG, "changed state to " + stateString
-                        + " playWhenReady: " + playWhenReady
-            )
-        }
-    }
 
     companion object {
         private val TAG = index::class.java.name
@@ -368,6 +253,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
             }
         }
     }
+
 
     private fun startRecording() {
         val uncompressedBitRate: Int = 8000 * BITS_PER_SAMPLE * NUMBER_CHANNELS
@@ -469,8 +355,55 @@ class Radiostream : Fragment(R.layout.fragment_radiostream) {
         playerNotificationManager.setRewindIncrementMs(0);
         playerNotificationManager.setFastForwardIncrementMs(0)
         playerNotificationManager.setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-        playerNotificationManager.setPlayer(exoPlayer)
+       // playerNotificationManager.setPlayer(exoPlayer)
     }
 
+    private fun initMediaControls() {
+        initPlayButton()
+    }
 
+    private fun initPlayButton() {
+        binding.btnPlay.requestFocus()
+        binding.btnPlay.setOnClickListener { setPlayPause(!isPlaying) }
+    }
+
+    /**
+     * Starts or stops playback. Also takes care of the Play/Pause button toggling
+     *
+     * @param play True if playback should be started
+     */
+    private fun setPlayPause(play: Boolean) {
+        isPlaying = play
+        if (!isPlaying) {
+            binding.btnPlay.setImageResource(android.R.drawable.ic_media_play)
+        } else {
+            binding.btnPlay.setImageResource(android.R.drawable.ic_media_pause)
+        }
+    }
+    private val connection = object : ServiceConnection {
+        override fun onServiceDisconnected(name: ComponentName?) {}
+        /*
+         * Called after a successful bind with our PlayerService.
+         */
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            if (service is PlayerService.PlayerServiceBinder) {
+                //service.getPlayerHolderInstance() // use the player and call methods on it to start and stop
+                binding.btnPlay.setOnClickListener {
+                    if (!isPlaying) {
+                        Toast.makeText(context, "Playing..", Toast.LENGTH_LONG).show()
+                        service.getPlayerHolderInstance().start()
+                        setPlayPause(true)
+                    } else {
+                        Toast.makeText(context, "Pausing..", Toast.LENGTH_LONG).show()
+                        service.getPlayerHolderInstance().stop()
+                        setPlayPause(false)
+                    }
+                }
+
+
+            }else{
+                setPlayPause(false)
+            }
+        }
+    }
 }

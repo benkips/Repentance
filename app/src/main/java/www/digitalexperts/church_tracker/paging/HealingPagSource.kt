@@ -13,7 +13,8 @@ class HealingPagSource( private val apiInterface: ApiInterface,
         val position = params.key ?: STARTING_PAGE_INDEX
 
         return try {
-            val response = apiInterface.gethealings(position, params.loadSize)
+            val response = apiInterface.gethealings("http" +
+                    "://mobile.repentanceandholinessinfo.com/mobiadmin/fullhealings",position, params.loadSize)
             val news = response.data
             LoadResult.Page(
                 data = news,

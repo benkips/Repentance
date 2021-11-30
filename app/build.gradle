@@ -17,7 +17,7 @@ android {
                 applicationId "www.digitalexperts.church_traker"
                 minSdkVersion 21
                 targetSdkVersion 30
-                versionCode 49
+                versionCode 56
                 versionName "1.7"
                 multiDexEnabled true
                 vectorDrawables.useSupportLibrary = true
@@ -105,9 +105,9 @@ dependencies {
 
 
     //Google's Exo Player : https://github.com/google/ExoPlayer
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.11.7'
+/*  implementation 'com.google.android.exoplayer:exoplayer-core:2.11.7'
     implementation 'com.google.android.exoplayer:exoplayer-dash:2.11.7'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.7'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.7'*/
 
     //facebook ads
     implementation 'com.facebook.android:audience-network-sdk:5.11.0'
@@ -120,6 +120,8 @@ dependencies {
     implementation 'tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.8'
     //native templates
     implementation project(':nativetemplates')
+    implementation 'org.jetbrains.anko:anko:0.10.8'
+    implementation project(path: ':playerlib')
 }
 kapt {
     correctErrorTypes true

@@ -260,6 +260,7 @@ fun  Context.getNameFromContentUri(context: Context, contentUri: Uri?): String? 
 fun Context.deleteaudio(uri:Uri){
 
    try {
+       //deleteFile(this.getNameFromContentUri(this,uri))
        val deleted = this.contentResolver.delete(uri, null, null)
 
        if (deleted >= 0) {

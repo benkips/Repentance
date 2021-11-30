@@ -1,18 +1,12 @@
 package www.digitalexperts.church_tracker.Repo
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.liveData
 import www.digitalexperts.church_tracker.Network.ApiInterface
-import www.digitalexperts.church_tracker.Network.Resource
-import www.digitalexperts.church_tracker.models.Churches
 import www.digitalexperts.church_tracker.paging.HealingPagSource
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class Repostuff @Inject constructor (private val apiInterface: ApiInterface):Baserepository(){
 
     suspend fun getSearchresults(query: String) =
