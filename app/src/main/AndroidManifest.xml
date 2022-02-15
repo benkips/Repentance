@@ -8,6 +8,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
 
     <application
         android:name="www.digitalexperts.church_tracker.Churchtracker"
@@ -17,6 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:preserveLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
 
         <service android:name="www.digitalexperts.church_tracker.notifications.FirebaseService"
@@ -27,7 +31,9 @@
             </intent-filter>
 
         </service>
-
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-4814079884774543~5696162508" />
         <activity
             android:name="www.digitalexperts.church_tracker.index"
             android:theme="@style/AppTheme.NoActionBar"
@@ -55,6 +61,15 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <receiver
+            android:name="www.digitalexperts.church_tracker.LaunchPlayerBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.beraldo.playerlib.LAUNCH_PLAYER_ACTIVITY" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

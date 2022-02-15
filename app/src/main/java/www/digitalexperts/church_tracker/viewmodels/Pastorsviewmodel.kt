@@ -5,12 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import www.digitalexperts.church_tracker.Network.Resource
 import www.digitalexperts.church_tracker.Repo.Repostuff
 import www.digitalexperts.church_tracker.models.Pastors
+import javax.inject.Inject
 
-class Pastorsviewmodel @ViewModelInject constructor(private  val repostuff: Repostuff) : ViewModel() {
+@HiltViewModel
+class Pastorsviewmodel @Inject constructor(private  val repostuff: Repostuff) : ViewModel() {
     private val _pastorResponse: MutableLiveData<Resource<Pastors>> = MutableLiveData()
     val pastorResponse: LiveData<Resource<Pastors>>
       get() = _pastorResponse

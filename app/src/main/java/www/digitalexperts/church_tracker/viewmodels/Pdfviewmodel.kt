@@ -5,12 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import www.digitalexperts.church_tracker.Network.Resource
 import www.digitalexperts.church_tracker.Repo.Repostuff
 import www.digitalexperts.church_tracker.models.Folderz
+import javax.inject.Inject
 
-class Pdfviewmodel @ViewModelInject constructor(private  val repostuff: Repostuff):ViewModel() {
+@HiltViewModel
+class Pdfviewmodel @Inject constructor(private  val repostuff: Repostuff):ViewModel() {
 
      private val _pdffolderResponse: MutableLiveData<Resource<Folderz>> = MutableLiveData()
     val pdffolderResponse: LiveData<Resource<Folderz>>

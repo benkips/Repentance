@@ -1,5 +1,6 @@
 package www.digitalexperts.church_tracker
 
+import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -21,6 +22,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
 import com.facebook.ads.AudienceNetworkAds
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +38,7 @@ class index : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private  lateinit var navController: NavController
-     val TOPIC="Alerts"
+     val TOPIC="Alertstwo"
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
@@ -46,6 +48,7 @@ class index : AppCompatActivity() {
         val binding= ActivityIndexBinding.inflate(layoutInflater)
         setContentView(binding.root)
         AudienceNetworkAds.initialize(this)
+        MobileAds.initialize(this) { }
 
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -71,6 +74,7 @@ class index : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         ExpandableBottomBarNavigationUI.setupWithNavController(expandable_bottom_bar, navController);
+
 
 
 
@@ -102,6 +106,9 @@ class index : AppCompatActivity() {
                 R.id.nav_insta -> {
                     val c = "https://www.instagram.com/jesusiscoming_2/"
                     navController.navigate(R.id.wvinfo, bundleOf("web" to c))
+                }
+                R.id.healings -> {
+                    navController.navigate(R.id.healingsfrag)
                 }
                 R.id.nav_share -> {
                     val sendIntent = Intent()
@@ -179,8 +186,14 @@ class index : AppCompatActivity() {
 
         return super.onOptionsItemSelected(item)
     }
+/*override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    val navController = findNavController(R.id.nav_host_fragment)
+    return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+}*/
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+
 }

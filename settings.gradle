@@ -1,3 +1,5 @@
 include ':app'
 rootProject.name = "Repentance"
 include ':pdfViewer'
+include ':nativetemplates'
+include ':playerlib'

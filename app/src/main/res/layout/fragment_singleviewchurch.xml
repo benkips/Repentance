@@ -73,6 +73,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:text="Loading..."
+                        android:textIsSelectable="true"
                         android:textSize="@dimen/_15sdp" />
                     <TextView
                         android:id="@+id/status"

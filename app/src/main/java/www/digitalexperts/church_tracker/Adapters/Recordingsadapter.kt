@@ -2,12 +2,16 @@ package www.digitalexperts.church_tracker.Adapters
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import www.digitalexperts.church_tracker.Utils.deleteaudio
+import www.digitalexperts.church_tracker.Utils.getNameFromContentUri
 import www.digitalexperts.church_tracker.models.DiffUtilRepositoriesModelItem
 import www.digitalexperts.church_tracker.models.Myaudioitems
 import www.digitalexperts.church_traker.databinding.ItemAudioBinding
@@ -34,18 +38,18 @@ class Recordingsadapter(private val listener: OnitemclicKListenera) :
                 audioName.text = aud.name
             }
             binding.deleteaudio.setOnClickListener {
-                val uri: String = aud.path
-                val file = File(uri)
-                file.delete()
+                val songname=binding.root.context.getNameFromContentUri(binding.root.context,aud.uri)
+                binding.root.context.deleteaudio(aud.uri)
+
                 listener.onDelete(position)
             }
             itemView.setOnClickListener {
-                val uri: String = aud.path
-                listener.playsong(uri)
+               /* val uri: String = aud.path*/
+                listener.playsong(aud.uri)
             }
             binding.shareaudio.setOnClickListener {
-                val uri: String = aud.path
-                listener.shareaudio(uri)
+                /*val uri: String = aud.path*/
+                listener.shareaudio(aud.uri)
             }
         }
 
@@ -64,8 +68,8 @@ class Recordingsadapter(private val listener: OnitemclicKListenera) :
 
     interface OnitemclicKListenera {
         fun onDelete(position: Int)
-        fun playsong( u:String)
-        fun shareaudio(u:String)
+        fun playsong( song:Uri)
+        fun shareaudio(share:Uri)
     }
 
 

@@ -6,5 +6,6 @@ data class ChurchesItem(
     val location: String,
     val longitude: String,
     val name: String,
-    val photo: String
+    val photo: String,
+    val status:String
 )

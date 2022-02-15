@@ -44,8 +44,8 @@
     <fragment
         android:id="@+id/wvinfo"
         android:name="www.digitalexperts.church_tracker.fragments.wvinfo"
-        android:label="Rentance and Holiness"
-        tools:layout="@layout/fragment_wvinfo" >
+        android:label="Repentance and Holiness"
+        tools:layout="@layout/fragment_wvinfo">
         <argument
             android:name="vlinks"
             app:argType="string" />
@@ -77,5 +77,10 @@
         android:name="www.digitalexperts.church_tracker.fragments.Singleviewchurch"
         android:label="Church details"
         tools:layout="@layout/fragment_singleviewchurch" />
+    <fragment
+        android:id="@+id/healingsfrag"
+        android:name="www.digitalexperts.church_tracker.fragments.Healingsfrag"
+        android:label="Healings of the  LORD"
+        tools:layout="@layout/fragment_healingsfrag" />
 
 </navigation>

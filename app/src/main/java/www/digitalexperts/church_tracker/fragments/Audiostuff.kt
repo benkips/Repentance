@@ -1,5 +1,6 @@
 package www.digitalexperts.church_tracker.fragments
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,6 +14,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import www.digitalexperts.church_tracker.Adapters.Recordingsadapter
+import www.digitalexperts.church_tracker.Utils.readaudios
 import www.digitalexperts.church_tracker.models.Myaudioitems
 import www.digitalexperts.church_traker.R
 import www.digitalexperts.church_traker.databinding.FragmentAudiostuffBinding
@@ -25,6 +27,7 @@ class Audiostuff : Fragment(R.layout.fragment_audiostuff),Recordingsadapter.Onit
     private val binding get() = _binding!!
 
     private lateinit var recordadapter: Recordingsadapter
+    private   val DELETE_PERMISSION_REQUEST=1
 
     private var filename: String? = null
     var audioArrayList: ArrayList<Myaudioitems> = ArrayList<Myaudioitems>()
@@ -41,16 +44,18 @@ class Audiostuff : Fragment(R.layout.fragment_audiostuff),Recordingsadapter.Onit
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).toString() + File.separator + "Recordings/"
         val externalStorageDirectory = File(filename)
         val folder = File(externalStorageDirectory.absolutePath)
-        val file = folder.listFiles()
-        if (file.isNotEmpty()) {
-            for (i in file.indices) {
-                audioArrayList.add(
-                    Myaudioitems(
-                        file[i].lastModified(),
-                        file[i].name,
-                        file[i].absolutePath
+        val file = context?.readaudios()
+        if (file != null) {
+            if (file.isNotEmpty()) {
+                for (i in file.indices) {
+                    audioArrayList.add(
+                        Myaudioitems(
+                            file[i].uri,
+                            file[i].name,
+                            file[i].size
+                        )
                     )
-                )
+                }
                 recordadapter= Recordingsadapter(this)
                 binding.rvaudio.also {
                     it.layoutManager = LinearLayoutManager(requireContext())
@@ -59,9 +64,10 @@ class Audiostuff : Fragment(R.layout.fragment_audiostuff),Recordingsadapter.Onit
 
                 }
                 recordadapter.submitList(audioArrayList)
+
+            } else {
+                Toast.makeText(context, "No Music downloaded yet", Toast.LENGTH_SHORT).show()
             }
-        } else {
-            Toast.makeText(context, "No Music downloaded yet", Toast.LENGTH_SHORT).show()
         }
     }
     override fun onDestroy() {
@@ -75,14 +81,14 @@ class Audiostuff : Fragment(R.layout.fragment_audiostuff),Recordingsadapter.Onit
         recordadapter.submitList(audioArrayList)
     }
 
-    override fun playsong(u: String) {
+    override fun playsong(apkURI: Uri) {
         val intent = Intent()
         intent.action = Intent.ACTION_VIEW
-        val file = File(u)
+       /* val file = File(u)
         val apkURI: Uri = FileProvider.getUriForFile(
             requireContext(), requireContext().applicationContext
                 .packageName.toString() + ".fileprovider", file
-        )
+        )*/
         intent.setDataAndType(apkURI, "audio/mp3")
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         val activities: List<ResolveInfo> = activity?.packageManager!!.queryIntentActivities(
@@ -99,14 +105,14 @@ class Audiostuff : Fragment(R.layout.fragment_audiostuff),Recordingsadapter.Onit
         }
     }
 
-    override fun shareaudio(u: String) {
+    override fun shareaudio(shareuri:Uri) {
         val intent = Intent()
         intent.action = Intent.ACTION_SEND
-        val file = File(u)
+       /* val file = File(u)
         val shareuri: Uri = FileProvider.getUriForFile(
             requireContext(), requireContext().applicationContext
                 .packageName.toString() + ".fileprovider", file
-        )
+        )*/
         intent.setType("audio/mp3")
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         intent.putExtra(Intent.EXTRA_STREAM, shareuri)
@@ -118,6 +124,8 @@ class Audiostuff : Fragment(R.layout.fragment_audiostuff),Recordingsadapter.Onit
             e.printStackTrace()
         }
     }
+
+
 
 
 }
