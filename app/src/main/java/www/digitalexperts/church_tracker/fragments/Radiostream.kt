@@ -37,7 +37,6 @@ import com.google.android.gms.ads.AdView
 import org.jetbrains.anko.AnkoLogger
 import www.digitalexperts.church_tracker.Utils.*
 import www.digitalexperts.church_tracker.index
-import www.digitalexperts.church_traker.BuildConfig
 import www.digitalexperts.church_traker.R
 import www.digitalexperts.church_traker.databinding.FragmentRadiostreamBinding
 import java.io.File
@@ -132,6 +131,10 @@ class Radiostream : Fragment(R.layout.fragment_radiostream)  , AnkoLogger {
         }
         binding.mrradio.setOnClickListener { view ->
             val c = "https://repentanceandholinessinfo.com/playradio.php"
+            Navigation.findNavController(view).navigate(R.id.wvinfo, bundleOf("web" to c))
+        }
+        binding.endtimemsg.setOnClickListener { view ->
+            val c = "http://node-15.zeno.fm/gmdx1sb97f8uv?rj-ttl=5&rj-tok=AAABfccRdpIA8mopC5CghSrEoA"
             Navigation.findNavController(view).navigate(R.id.wvinfo, bundleOf("web" to c))
         }
         binding.playnow.setOnClickListener { v ->
@@ -365,6 +368,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream)  , AnkoLogger {
     private fun initPlayButton() {
         binding.btnPlay.requestFocus()
         binding.btnPlay.setOnClickListener { setPlayPause(!isPlaying) }
+        binding.rec.visibility=View.VISIBLE
     }
 
     /**

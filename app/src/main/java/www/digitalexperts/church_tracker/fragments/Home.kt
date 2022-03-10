@@ -64,7 +64,7 @@ class Home : Fragment(R.layout.fragment_home) {
             }
         }
         binding.srchquery.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_GO) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val qry:String=binding.srchquery.text.toString().trim()
                 if(!qry.isEmpty()) {
                     srchnow(qry)

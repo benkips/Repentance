@@ -32,7 +32,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Record"
-                    app:srcCompat="@drawable/ic_baseline_fiber_manual_record_24"
                     android:id="@+id/txtrecord"
                     android:layout_weight="1"
                     android:visibility="gone"
@@ -117,6 +116,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="more radio links"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_25sdp"/>
+
+                <Button
+                    android:id="@+id/endtimemsg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/teal_200"
+                    android:text="24/7 EndTime Messages"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/_25sdp"/>
             </LinearLayout>
