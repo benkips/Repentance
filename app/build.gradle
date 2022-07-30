@@ -10,13 +10,14 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdk 32
+    buildToolsVersion '32.0.0'
 
     defaultConfig {
                 applicationId "www.digitalexperts.church_traker"
                 minSdkVersion 21
-                targetSdkVersion 32
-                versionCode 58
+                targetSdkVersion 30
+                versionCode 59
                 versionName "1.7"
                 multiDexEnabled true
                 vectorDrawables.useSupportLibrary = true
