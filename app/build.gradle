@@ -56,8 +56,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.3'
     implementation 'androidx.navigation:navigation-fragment:2.3.1'
     implementation 'androidx.navigation:navigation-ui:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -74,7 +74,7 @@ dependencies {
     // Dagger Hilt
     implementation "com.google.dagger:hilt-android:$hiltVersion"
     kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltAndroidXVersion"
+    //implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltAndroidXVersion"
     kapt "androidx.hilt:hilt-compiler:$hiltAndroidXVersion"
 
     // Retrofit + GSON
@@ -122,6 +122,10 @@ dependencies {
     implementation project(':nativetemplates')
     implementation 'org.jetbrains.anko:anko:0.10.8'
     implementation project(path: ':playerlib')
+    //splash screen
+    implementation 'androidx.core:core-splashscreen:1.0.0-rc01'
+    //help with pending intent
+    implementation 'androidx.work:work-runtime-ktx:2.7.0'
 }
 kapt {
     correctErrorTypes true
