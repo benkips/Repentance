@@ -33,6 +33,8 @@ import www.digitalexperts.church_tracker.Utils.showPermissionRequestExplanation
 import www.digitalexperts.church_traker.R
 import www.digitalexperts.church_traker.databinding.ActivityIndexBinding
 
+//import www.digitalexperts.church_traker.databinding.ActivityIndexBinding
+
 @AndroidEntryPoint
 @RequiresApi(Build.VERSION_CODES.M)
 class index : AppCompatActivity() {
