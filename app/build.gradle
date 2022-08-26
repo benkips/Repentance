@@ -17,7 +17,7 @@ android {
                 applicationId "www.digitalexperts.church_traker"
                 minSdkVersion 21
                 targetSdkVersion 30
-                versionCode 61
+                versionCode 63
                 versionName "1.8"
                 multiDexEnabled true
                 vectorDrawables.useSupportLibrary = true

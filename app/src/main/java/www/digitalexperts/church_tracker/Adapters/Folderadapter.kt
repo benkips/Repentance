@@ -5,13 +5,8 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.facebook.ads.*
 import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.ads.AdListener
@@ -23,29 +18,17 @@ import www.digitalexperts.church_traker.R
 import www.digitalexperts.church_traker.databinding.FolderinfBinding
 
 class Folderadapter(val folderz:ArrayList<FolderzItem>):  RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val AD_TYPE = 1
-    private val DEFAULT_VIEW_TYPE = 2
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        if (viewType == AD_TYPE) {
-            val view = LayoutInflater.from(parent.context).inflate(
-                R.layout.templatefile2,
-                parent,
-                false
-            )
-            return adholderc(view)
-        } else {
             val binding = FolderinfBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             return Folderholder(binding)
-        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
        if (holder !is Folderholder) {
             return
         }
-         val itemPosition = position - position / 2
-        val currentitem=folderz[itemPosition];
+        val currentitem=folderz[position];
         if(currentitem!=null){
             holder.bind(currentitem)
         }
@@ -53,14 +36,9 @@ class Folderadapter(val folderz:ArrayList<FolderzItem>):  RecyclerView.Adapter<R
 
     override fun getItemCount(): Int {
         var itemCount: Int = folderz.size
-        itemCount += itemCount / 2
         return itemCount
     }
-    override fun getItemViewType(position: Int): Int {
-        return if (position > 1 && position % 2== 0) {
-            AD_TYPE
-        } else DEFAULT_VIEW_TYPE
-    }
+
 
     inner class Folderholder(val binding: FolderinfBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(datas: FolderzItem){
