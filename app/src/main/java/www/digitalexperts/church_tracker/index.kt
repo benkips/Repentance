@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -33,8 +32,6 @@ import www.digitalexperts.church_tracker.Utils.showPermissionRequestExplanation
 import www.digitalexperts.church_traker.R
 import www.digitalexperts.church_traker.databinding.ActivityIndexBinding
 
-//import www.digitalexperts.church_traker.databinding.ActivityIndexBinding
-
 @AndroidEntryPoint
 @RequiresApi(Build.VERSION_CODES.M)
 class index : AppCompatActivity() {
@@ -48,7 +45,6 @@ class index : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_index)
-        installSplashScreen()
         val binding= ActivityIndexBinding.inflate(layoutInflater)
         setContentView(binding.root)
         AudienceNetworkAds.initialize(this)

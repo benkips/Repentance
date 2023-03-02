@@ -2,10 +2,10 @@
 buildscript {
     /*ext.*/
     ext {
-        kotlin_version = "1.6.0"
-        kotlinVersion = '1.6.0'
-        navigationVersion = '2.4.1'
-        hiltVersion = '2.42'
+        kotlin_version = "1.5.10"
+        kotlinVersion = '1.5.10'
+        navigationVersion = '2.3.0'
+        hiltVersion = '2.37'
     }
     repositories {
         google()
@@ -13,13 +13,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath 'com.android.tools.build:gradle:7.0.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
 
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hiltVersion"
-        //kapt "com.google.dagger:hilt-compiler:$hiltVersion"
 
         classpath 'com.google.gms:google-services:4.3.4'
 

@@ -1,6 +1,6 @@
 package www.digitalexperts.church_tracker.viewmodels
 
-//import androidx.hilt.lifecycle.ViewModelInject
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

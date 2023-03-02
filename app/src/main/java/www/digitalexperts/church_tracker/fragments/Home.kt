@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import www.digitalexperts.church_tracker.Adapters.Churchadapter
 import www.digitalexperts.church_tracker.Network.Resource
 import www.digitalexperts.church_tracker.Utils.handleApiError
+import www.digitalexperts.church_tracker.Utils.myalert
 import www.digitalexperts.church_tracker.Utils.visible
 import www.digitalexperts.church_tracker.viewmodels.Churchviewmodel
 import www.digitalexperts.church_traker.R
@@ -36,13 +37,23 @@ class Home : Fragment(R.layout.fragment_home) {
             binding.pgbar.visible(it is Resource.Loading)
             when (it) {
                 is Resource.Success -> {
-                    binding.rvchurches.also {rv->
-                        rv.layoutManager=LinearLayoutManager(requireContext())
-                        rv.setHasFixedSize(true)
-                        rv.adapter=Churchadapter(it.value)
+
+                    if (it.value.get(0).status != null) {
+                        Toast.makeText(context,"The alter or pastor requested was not found.Please bear with us as we update our records", Toast.LENGTH_LONG)
+                            .show()
+                    } else {
+
+                        binding.rvchurches.also { rv ->
+                            rv.layoutManager = LinearLayoutManager(requireContext())
+                            rv.setHasFixedSize(true)
+                            rv.adapter = Churchadapter(it.value)
+                        }
                     }
+
                 }
-                is Resource.Failure -> handleApiError(it) { srchnow("nairobi") }
+                is Resource.Failure -> handleApiError(it) {
+                    srchnow("nairobi")
+                }
             }
         })
 
@@ -53,7 +64,7 @@ class Home : Fragment(R.layout.fragment_home) {
             }
         }
         binding.srchquery.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            if (actionId == EditorInfo.IME_ACTION_GO) {
                 val qry:String=binding.srchquery.text.toString().trim()
                 if(!qry.isEmpty()) {
                     srchnow(qry)
