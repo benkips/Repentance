@@ -1,13 +1,9 @@
 package www.digitalexperts.church_tracker.Adapters
 
-import android.content.Intent
 import android.net.Uri
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import www.digitalexperts.church_tracker.Utils.deleteaudio
@@ -15,7 +11,6 @@ import www.digitalexperts.church_tracker.Utils.getNameFromContentUri
 import www.digitalexperts.church_tracker.models.DiffUtilRepositoriesModelItem
 import www.digitalexperts.church_tracker.models.Myaudioitems
 import www.digitalexperts.church_traker.databinding.ItemAudioBinding
-import java.io.File
 
 
 class Recordingsadapter(private val listener: OnitemclicKListenera) :

@@ -1,6 +1,8 @@
 package www.digitalexperts.church_tracker.fragments
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,9 +10,13 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.paging.LoadState
+import com.google.android.exoplayer2.ExoPlayer
 import dagger.hilt.android.AndroidEntryPoint
 import www.digitalexperts.church_tracker.Adapters.Healadapter
 import www.digitalexperts.church_tracker.Adapters.HealingLoadStateAdapter
+import www.digitalexperts.church_tracker.Utils.PlayerViewAdapter
+import www.digitalexperts.church_tracker.Utils.PlayerViewAdapter.Companion.playIndexThenPausePreviousPlayer
+import www.digitalexperts.church_tracker.Utils.RecyclerViewScrollListener
 import www.digitalexperts.church_tracker.models.Healings
 import www.digitalexperts.church_tracker.viewmodels.Healingviewmodel
 import www.digitalexperts.church_traker.R
@@ -25,6 +31,8 @@ class Healingsfrag : Fragment(R.layout.fragment_healingsfrag) ,Healadapter.OnIte
         super.onViewCreated(view, savedInstanceState)
 
         _binding=FragmentHealingsfragBinding.bind(view)
+        lateinit var scrollListener: RecyclerViewScrollListener
+
         val adapter= Healadapter(this)
 
         binding.apply {
@@ -38,7 +46,18 @@ class Healingsfrag : Fragment(R.layout.fragment_healingsfrag) ,Healadapter.OnIte
             }
         }
 
-        viewmodel.Healed.observe(viewLifecycleOwner){
+        scrollListener = object : RecyclerViewScrollListener() {
+            override fun onItemIsFirstVisibleItem(index: Int) {
+                Log.d("visible item index", index.toString())
+                // play just visible item
+                if (index != -1)
+                    playIndexThenPausePreviousPlayer(index)
+            }
+        }
+        binding.rvheals.addOnScrollListener(scrollListener)
+
+
+            viewmodel.Healed.observe(viewLifecycleOwner){
             adapter.submitData(viewLifecycleOwner.lifecycle,it)
         }
 
@@ -57,6 +76,8 @@ class Healingsfrag : Fragment(R.layout.fragment_healingsfrag) ,Healadapter.OnIte
                 }else{
                     tvViewEmpty.isVisible =false
                 }
+
+
             }
         }
     }
@@ -65,6 +86,7 @@ class Healingsfrag : Fragment(R.layout.fragment_healingsfrag) ,Healadapter.OnIte
         super.onItemClick(heal)
     }
     override fun onDestroyView() {
+        PlayerViewAdapter.releaseAllPlayers()
         super.onDestroyView()
         _binding = null
     }

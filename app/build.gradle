@@ -10,15 +10,15 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdk 32
+    buildToolsVersion '32.0.0'
 
     defaultConfig {
                 applicationId "www.digitalexperts.church_traker"
                 minSdkVersion 21
-                targetSdkVersion 30
-                versionCode 56
-                versionName "1.7"
+                targetSdkVersion 32
+                versionCode 64
+                versionName "1.8"
                 multiDexEnabled true
                 vectorDrawables.useSupportLibrary = true
                 testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -56,8 +56,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.3'
     implementation 'androidx.navigation:navigation-fragment:2.3.1'
     implementation 'androidx.navigation:navigation-ui:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -74,7 +74,7 @@ dependencies {
     // Dagger Hilt
     implementation "com.google.dagger:hilt-android:$hiltVersion"
     kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltAndroidXVersion"
+    //implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltAndroidXVersion"
     kapt "androidx.hilt:hilt-compiler:$hiltAndroidXVersion"
 
     // Retrofit + GSON
@@ -105,23 +105,32 @@ dependencies {
 
 
     //Google's Exo Player : https://github.com/google/ExoPlayer
-/*  implementation 'com.google.android.exoplayer:exoplayer-core:2.11.7'
-    implementation 'com.google.android.exoplayer:exoplayer-dash:2.11.7'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.7'*/
+  implementation 'com.google.android.exoplayer:exoplayer-core:2.18.0'
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.0'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.0'
 
     //facebook ads
     implementation 'com.facebook.android:audience-network-sdk:5.11.0'
     //Google ads
     implementation 'com.google.android.gms:play-services-ads:19.6.0'
     //for videos
-    implementation 'cn.onestravel:FiveFiveVideoPlayer:1.0.3'
+  /*  implementation 'cn.onestravel:FiveFiveVideoPlayer:1.0.3'
     implementation 'tv.danmaku.ijk.media:ijkplayer-arm64:0.8.8'
     implementation 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.8'
-    implementation 'tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.8'
+    implementation 'tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.8'*/
     //native templates
     implementation project(':nativetemplates')
     implementation 'org.jetbrains.anko:anko:0.10.8'
     implementation project(path: ':playerlib')
+    //splash screen
+    implementation 'androidx.core:core-splashscreen:1.0.0-rc01'
+    //help with pending intent
+    implementation 'androidx.work:work-runtime-ktx:2.7.0'
+    //databinding
+    implementation 'com.android.databinding:viewbinding:4.0.1'
+    //multidex
+    implementation 'androidx.multidex:multidex:2.0.1'
+
 }
 kapt {
     correctErrorTypes true

@@ -20,14 +20,10 @@ import android.content.Context
 import android.media.AudioManager
 import android.net.Uri
 import androidx.media.AudioAttributesCompat
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
@@ -51,14 +47,16 @@ class PlayerHolder(
         audioFocusPlayer = AudioFocusWrapper(
             audioAttributes,
             audioManager,
-            ExoPlayerFactory.newSimpleInstance(context, DefaultTrackSelector())
+            SimpleExoPlayer.Builder(context).build()
         ).apply { prepare(buildMediaSource(Uri.parse(streamUrl))) }
         info { "SimpleExoPlayer created" }
     }
 
     private fun buildMediaSource(uri: Uri): MediaSource {
-        return ExtractorMediaSource.Factory(DefaultHttpDataSourceFactory("exo-radiouci"))
-            .createMediaSource(uri)
+        val dataSourceFactory = DefaultHttpDataSource.Factory()
+            .setDefaultRequestProperties(hashMapOf("Header" to "exo-radiouci"))
+        return ProgressiveMediaSource .Factory(dataSourceFactory)
+            .createMediaSource(MediaItem.fromUri(uri))
     }
 
     // Prepare playback.
@@ -105,12 +103,12 @@ class PlayerHolder(
      */
     private fun attachLogging(exoPlayer: ExoPlayer) {
         // Write to log on state changes.
-        exoPlayer.addListener(object : Player.DefaultEventListener() {
+        exoPlayer.addListener(object : Player.Listener{
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 info { "playerStateChanged: ${getStateString(playbackState)}, $playWhenReady" }
             }
 
-            override fun onPlayerError(error: ExoPlaybackException) {
+            override fun onPlayerError(error: PlaybackException) {
                 info { "playerError: $error" }
             }
             /*fun onPlayerError(error: ExoPlaybackException?) {

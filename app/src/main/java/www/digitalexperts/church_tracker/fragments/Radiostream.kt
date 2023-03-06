@@ -9,12 +9,10 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.media.MediaRecorder
-import android.net.Uri
 import android.os.*
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
-import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,25 +22,20 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.beraldo.playerlib.PlayerService
-import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import org.jetbrains.anko.AnkoLogger
 import www.digitalexperts.church_tracker.Utils.*
 import www.digitalexperts.church_tracker.index
-import www.digitalexperts.church_traker.BuildConfig
 import www.digitalexperts.church_traker.R
 import www.digitalexperts.church_traker.databinding.FragmentRadiostreamBinding
 import java.io.File
 import java.io.IOException
 import java.util.*
+
 @RequiresApi(Build.VERSION_CODES.FROYO)
 class Radiostream : Fragment(R.layout.fragment_radiostream)  , AnkoLogger {
 
@@ -134,6 +127,10 @@ class Radiostream : Fragment(R.layout.fragment_radiostream)  , AnkoLogger {
             val c = "https://repentanceandholinessinfo.com/playradio.php"
             Navigation.findNavController(view).navigate(R.id.wvinfo, bundleOf("web" to c))
         }
+        binding.endtimemsg.setOnClickListener { view ->
+            val c = "http://node-15.zeno.fm/gmdx1sb97f8uv?rj-ttl=5&rj-tok=AAABfccRdpIA8mopC5CghSrEoA"
+            Navigation.findNavController(view).navigate(R.id.wvinfo, bundleOf("web" to c))
+        }
         binding.playnow.setOnClickListener { v ->
             val externalStorageDirectory = File(fileName)
             val folder = File(externalStorageDirectory.absolutePath)
@@ -220,6 +217,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream)  , AnkoLogger {
 
 
     companion object {
+        @RequiresApi(Build.VERSION_CODES.M)
         private val TAG = index::class.java.name
     }
 
@@ -327,33 +325,57 @@ class Radiostream : Fragment(R.layout.fragment_radiostream)  , AnkoLogger {
             }
         }
 
-        playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
+        PlayerNotificationManager.Builder(
             requireContext(),
-            "My_channel_id",
-            R.string.app_name,
-            notificationId,
-            mediaDescriptionAdapter,
-            object : PlayerNotificationManager.NotificationListener {
-                override fun onNotificationPosted(
-                    notificationId: Int,
-                    notification: Notification,
-                    ongoing: Boolean
-                ) {
+            PlayerService.NOTIFICATION_ID,  PlayerService.NOTIFICATION_CHANNEL)
+            .setChannelNameResourceId(R.string.app_name,)
+            .setChannelDescriptionResourceId( R.string.app_name)
+            .setMediaDescriptionAdapter(mediaDescriptionAdapter)
+            .setNotificationListener(
+                object : PlayerNotificationManager.NotificationListener {
+                    override fun onNotificationPosted(
+                        notificationId: Int,
+                        notification: Notification,
+                        ongoing: Boolean
+                    ) {
+
+                    }
+
+                    override fun onNotificationCancelled(
+                        notificationId: Int,
+                        dismissedByUser: Boolean
+                    ) {
+                    }
 
                 }
+            )
 
-                override fun onNotificationCancelled(
-                    notificationId: Int,
-                    dismissedByUser: Boolean
-                ) {
+        playerNotificationManager =PlayerNotificationManager.Builder(
+            requireContext(),
+            PlayerService.NOTIFICATION_ID,  PlayerService.NOTIFICATION_CHANNEL)
+            .setChannelNameResourceId(R.string.app_name,)
+            .setChannelDescriptionResourceId( R.string.app_name)
+            .setMediaDescriptionAdapter(mediaDescriptionAdapter)
+            .setNotificationListener(
+                object : PlayerNotificationManager.NotificationListener {
+                    override fun onNotificationPosted(
+                        notificationId: Int,
+                        notification: Notification,
+                        ongoing: Boolean
+                    ) {
+
+                    }
+
+                    override fun onNotificationCancelled(
+                        notificationId: Int,
+                        dismissedByUser: Boolean
+                    ) {
+                    }
+
                 }
+            ).build()
 
-            })
 
-        playerNotificationManager.setUseNavigationActions(false)
-        playerNotificationManager.setUseNavigationActionsInCompactView(false)
-        playerNotificationManager.setRewindIncrementMs(0);
-        playerNotificationManager.setFastForwardIncrementMs(0)
         playerNotificationManager.setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
        // playerNotificationManager.setPlayer(exoPlayer)
     }
@@ -365,6 +387,7 @@ class Radiostream : Fragment(R.layout.fragment_radiostream)  , AnkoLogger {
     private fun initPlayButton() {
         binding.btnPlay.requestFocus()
         binding.btnPlay.setOnClickListener { setPlayPause(!isPlaying) }
+        binding.rec.visibility=View.VISIBLE
     }
 
     /**

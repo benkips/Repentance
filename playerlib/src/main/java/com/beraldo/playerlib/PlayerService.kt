@@ -68,12 +68,12 @@ class PlayerService : IntentService("playerlib"), PlayerNotificationManager.Noti
          * when building a notification we need to create a channel to which assign it.
          */
         playerNotificationManager = PlayerModule.getPlayerNotificationManager(this).also {
-            it.setNotificationListener(this)
+            //it.setNotificationListener(this)
             it.setPlayer(playerHolder.audioFocusPlayer)
         }
     }
 
-    override fun onNotificationStarted(notificationId: Int, notification: Notification) {
+    fun onNotificationStarted(notificationId: Int, notification: Notification) {
         startForeground(notificationId, notification)
     }
 
@@ -83,7 +83,7 @@ class PlayerService : IntentService("playerlib"), PlayerNotificationManager.Noti
      * This way we can make our service a foreground service given a notification which was built
      * [playerNotificationManager].
      */
-    override fun onNotificationCancelled(notificationId: Int) {}
+    override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {}
 
     /*override fun onNotificationStarted(notificationId: Int, notification: Notification?) {
         startForeground(notificationId, notification)

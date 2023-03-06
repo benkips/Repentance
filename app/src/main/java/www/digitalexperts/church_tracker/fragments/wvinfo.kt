@@ -129,38 +129,8 @@ class wvinfo : Fragment(R.layout.fragment_wvinfo) {
                 false
             })
         }
-        adView = AdView(context)
-        binding.bannerContainertwo.addView(adView)
-        adView.adUnitId = "ca-app-pub-4814079884774543/6358507489"
 
-        adView.adSize = adSize
-        val adRequest = AdRequest
-            .Builder()
-            .build()
-        // Start loading the ad in the background.
-        adView.loadAd(adRequest)
-
-       /* adView = AdView(context, "376366029998847_376375873331196", AdSize.BANNER_HEIGHT_50)
-        binding.bannerContainertwo.addView(adView)
-        adView!!.loadAd()*/
     }
-
-    private val adSize: AdSize
-        get() {
-            val display =activity?.windowManager!!.defaultDisplay
-            val outMetrics = DisplayMetrics()
-            display.getMetrics(outMetrics)
-
-            val density = outMetrics.density
-
-            var adWidthPixels = binding.bannerContainertwo.width.toFloat()
-            if (adWidthPixels == 0f) {
-                adWidthPixels = outMetrics.widthPixels.toFloat()
-            }
-
-            val adWidth = (adWidthPixels / density).toInt()
-            return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
-        }
 
     override fun onDestroy() {
         super.onDestroy()

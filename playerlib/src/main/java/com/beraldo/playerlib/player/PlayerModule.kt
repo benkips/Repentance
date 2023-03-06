@@ -33,20 +33,15 @@ object PlayerModule {
     fun getPlayerHolder(context: Context, streamUrl: String) = PlayerHolder(context, streamUrl, PlayerState())
 
     fun getPlayerNotificationManager(context: Context): PlayerNotificationManager =
-        PlayerNotificationManager.createWithNotificationChannel(
+        PlayerNotificationManager.Builder(
             context,
-            PlayerService.NOTIFICATION_CHANNEL,
-            R.string.app_name,
-            PlayerService.NOTIFICATION_ID,
-            getDescriptionAdapter(context)
-        ).apply {
-            setFastForwardIncrementMs(0)
-            //setOngoing(true)
-            setUseNavigationActions(false)
-            setRewindIncrementMs(0)
-            setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            //setStopAction(null)
-        }
+            PlayerService.NOTIFICATION_ID,  PlayerService.NOTIFICATION_CHANNEL)
+            .setChannelNameResourceId(R.string.app_name,)
+            .setChannelDescriptionResourceId(R.string.app_name,)
+            .setMediaDescriptionAdapter(getDescriptionAdapter(context))
+            //.setNotificationListener(notificationListener)
+            .build()
+
 
     private fun getDescriptionAdapter(context: Context) = DescriptionAdapter(context)
 }
