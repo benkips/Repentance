@@ -11,6 +11,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.paging.LoadState
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import dagger.hilt.android.AndroidEntryPoint
 import www.digitalexperts.church_tracker.Adapters.Healadapter
 import www.digitalexperts.church_tracker.Adapters.HealingLoadStateAdapter
@@ -26,6 +29,10 @@ class Healingsfrag : Fragment(R.layout.fragment_healingsfrag) ,Healadapter.OnIte
     private  val viewmodel by viewModels<Healingviewmodel>()
     private  var _binding :FragmentHealingsfragBinding?=null
     private val binding get() = _binding!!
+
+    private lateinit var mHttpDataSourceFactory: HttpDataSource.Factory
+    private lateinit var mDefaultDataSourceFactory: DefaultDataSourceFactory
+    private lateinit var mCacheDataSource: CacheDataSource
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,12 +60,14 @@ class Healingsfrag : Fragment(R.layout.fragment_healingsfrag) ,Healadapter.OnIte
                 if (index != -1)
                     playIndexThenPausePreviousPlayer(index)
             }
+
         }
         binding.rvheals.addOnScrollListener(scrollListener)
 
-
             viewmodel.Healed.observe(viewLifecycleOwner){
             adapter.submitData(viewLifecycleOwner.lifecycle,it)
+               // adapter.snapshot().items.
+
         }
 
         adapter.addLoadStateListener {loadstate->
@@ -76,6 +85,7 @@ class Healingsfrag : Fragment(R.layout.fragment_healingsfrag) ,Healadapter.OnIte
                 }else{
                     tvViewEmpty.isVisible =false
                 }
+
 
 
             }

@@ -1,12 +1,12 @@
 package www.digitalexperts.church_tracker.Adapters
 
-import android.content.Context
+
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -15,20 +15,32 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.android.exoplayer2.upstream.DataSpec
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheWriter
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import www.digitalexperts.church_tracker.Churchtracker
 import www.digitalexperts.church_tracker.Utils.PlayerStateCallback
-import www.digitalexperts.church_tracker.Utils.PlayerViewAdapter
 import www.digitalexperts.church_tracker.Utils.PlayerViewAdapter.Companion.playersMap
-
-
 import www.digitalexperts.church_tracker.models.Healings
 import www.digitalexperts.church_traker.databinding.VideostuffBinding
+
 
 class Healadapter (private val listener: OnItemClickListner) :
     PagingDataAdapter<Healings, Healadapter.HealViewHolder>(
         HEAL_COMPARATOR
     ) ,
     PlayerStateCallback {
+
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HealViewHolder {
         val binding=VideostuffBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         return HealViewHolder(binding)
@@ -37,6 +49,7 @@ class Healadapter (private val listener: OnItemClickListner) :
         val currentitem=getItem(position);
         if(currentitem!=null){
             holder.bind(currentitem)
+
         }
     }
 
@@ -59,12 +72,11 @@ class Healadapter (private val listener: OnItemClickListner) :
 
         fun bind(heals: Healings) {
             binding.tvvmsgs.text = heals.message
-
             val sdf = java.text.SimpleDateFormat("dd/MM/yyyy")
             val date = java.util.Date(heals.time.toLong() * 1000)
             binding.tme.text=sdf.format(date)
 
-
+            //link from s3
             /*val  path ="http://mobile.repentanceandholinessinfo.com/static/uploads/"+heals.video*/
             val  path =heals.vidlink
 
@@ -102,6 +114,7 @@ class Healadapter (private val listener: OnItemClickListner) :
             ) = oldItem == newItem
 
         }
+
     }
 
     fun StyledPlayerView.loadVideo(url: String, callback: PlayerStateCallback, progressbar: ProgressBar, item_index: Int? = null, autoPlay: Boolean = false,player: ExoPlayer) {
@@ -116,12 +129,24 @@ class Healadapter (private val listener: OnItemClickListner) :
         // We'll show the controller, change to true if want controllers as pause and start
         this.useController = false
         // Provide url to load the video from here
-        val dataSourceFactory = DefaultHttpDataSource.Factory()
-            .setDefaultRequestProperties(hashMapOf("Header" to "Value"))
-        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(
-            MediaItem.fromUri(Uri.parse(url)))
-        player.prepare(mediaSource)
 
+        /*val dataSourceFactory = DefaultHttpDataSource.Factory()
+            .setDefaultRequestProperties(hashMapOf("Header" to "Value"))*/
+        /*val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(
+            MediaItem.fromUri(Uri.parse(url)))
+        */
+
+        val mediaSource = ProgressiveMediaSource.Factory(
+            CacheDataSource.Factory()
+                .setCache(Churchtracker.simpleCache)
+                .setUpstreamDataSourceFactory(
+                    DefaultHttpDataSource.Factory()
+                        .setUserAgent("ExoplayerDemo")
+                )
+                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+        ).createMediaSource(MediaItem.fromUri(Uri.parse(url)))
+
+        player.prepare(mediaSource)
         this.player = player
 
         // add player with its index to map
@@ -166,6 +191,7 @@ class Healadapter (private val listener: OnItemClickListner) :
 
     override fun onFinishedPlaying(player: Player) {
     }
+
 }
 
 
